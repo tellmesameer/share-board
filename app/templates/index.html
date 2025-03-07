@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShareBoard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        #messageInput {
+            height: 300px;
+            resize: none;
+        }
+        /* Sidebar styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 100%;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-left: 1px solid #dee2e6;
+            transition: all 0.3s ease; /* Add transition for smooth animation */
+        }
+        .sidebar.collapsed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .sidebar-toggle {
+            position: absolute;
+            top: 10px;
+            left: -25px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .theme-container { /* Added a container for the theme heading and dropdown */
+            position: relative;
+        }
+        .theme-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            z-index: 1;
+        }
+        .theme-container:hover .theme-dropdown { /* Changed hover target to theme-container */
+            display: block;
+        }
+        .theme-dropdown button {
+            margin-bottom: 5px;
+        }
+        .dark-mode {
+            background-color: #343a40;
+            color: white;
+        }
+        .dark-mode h1, .dark-mode h5 {
+            color: white;
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container">
+        <h1>ShareBoard - Scratch Pad</h1>
+        <div class="form-group" style="display: none;">
+            <label for="sessionId">Session ID:</label>
+            <input type="text" class="form-control" id="sessionId" value="{{session_id}}">
+        </div>
+        <div class="form-group">
+            <textarea class="form-control" id="messageInput" placeholder="Type your message..."></textarea>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <!-- <div class="sidebar">
+        <div class="sidebar-toggle">&#9776;</div>
+        <div class="theme-container">  
+            <h5>Theme</h5>
+            <div class="theme-dropdown">
+                <button class="btn btn-light theme-button" data-theme="light">Light</button>
+                <button class="btn btn-dark theme-button" data-theme="dark">Dark</button>
+            </div>
+        </div>
+    </div> -->
+
+    <script>
+        const themeButtons = document.querySelectorAll('.theme-button');
+        const body = document.querySelector('body');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+
+        themeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const theme = button.getAttribute('data-theme');
+                if (theme === 'dark') {
+                    body.classList.add('dark-mode');
+                } else {
+                    body.classList.remove('dark-mode');
+                }
+            });
+        });
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+    </script>
+
+    <script src="/static/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
