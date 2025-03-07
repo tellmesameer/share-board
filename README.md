@@ -6,7 +6,7 @@ ShareBoard is a real-time collaborative scratchpad application built with FastAP
 
 ## Features
 
-*   Real-time collaboration using WebSockets
+*   Real-time collaboration using WebSockets 
 *   Simple and intuitive user interface
 *   Dark and light theme support
 *   Collapsible sidebar for settings
