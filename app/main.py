@@ -14,7 +14,6 @@ origins = [
     "http://127.0.0.1:8000",
     "https://shareboard.leapcell.app",  # Correct deployed origin
     "https://shareboard.leapcell.app/",  # Correct deployed origin
-    "*"
 ]
 
 app.add_middleware(
