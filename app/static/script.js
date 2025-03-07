@@ -20,7 +20,10 @@ const messageInput = document.getElementById("messageInput");
 
 messageInput.addEventListener("input", () => {
     if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(messageInput.value);
+        const encoder = new TextEncoder();
+        const encodedData = encoder.encode(messageInput.value);
+        const textData = new TextDecoder().decode(encodedData); // Convert to string
+        socket.send(textData);
     }
 });
 
