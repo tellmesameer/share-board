@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket
 from app.routes import messages
 from app.websockets import websocket_endpoint
 from app.database import init_db
@@ -44,3 +44,15 @@ app.add_api_websocket_route("/ws/{session_id}", websocket_endpoint)
 @app.get("/{session_id}")
 async def serve_index(request: Request, session_id: str):
     return templates.TemplateResponse("index.html", {"request": request, "session_id":session_id})
+
+@app.websocket("/ws/{session_id}")
+async def websocket_endpoint(websocket: WebSocket, session_id: str):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await websocket.send_text(f"Session {session_id} says: {data}")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        print("Connection closed")
