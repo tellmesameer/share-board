@@ -31,4 +31,4 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, db: AsyncSes
         # Remove the connection from the session
         if session_id in active_sessions:
             active_sessions[session_id].remove(websocket)
-        await websocket.close()
+        # await websocket.close()
