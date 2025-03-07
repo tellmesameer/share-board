@@ -18,8 +18,8 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str, db: AsyncSes
         while True:
             text = await websocket.receive_text()
             print(text)
-            print("====================================")
-            await save_message(db, session_id, text)
+            # print("====================================")
+            # await save_message(db, session_id, text)
 
             # Broadcast the message to all connected clients in the session
             for client in active_sessions[session_id]:
