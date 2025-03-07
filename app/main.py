@@ -12,8 +12,9 @@ origins = [
     "http://localhost",  # Allow connections from localhost
     "http://localhost:8000",  # Or your specific port
     "http://127.0.0.1:8000",
-    "*", # only for development purposes
-    # Add other origins as needed
+    "https://shareboard.leapcell.app",  # Correct deployed origin
+    "https://shareboard.leapcell.app/",  # Correct deployed origin
+    "*"
 ]
 
 app.add_middleware(
@@ -38,7 +39,7 @@ async def startup():
 app.include_router(messages.router, prefix="")
 
 # WebSocket endpoint
-app.add_api_websocket_route("/ws/{session_id}", websocket_endpoint)
+# app.add_api_websocket_route("/ws/{session_id}", websocket_endpoint)
 
 
 @app.get("/{session_id}")
@@ -47,12 +48,12 @@ async def serve_index(request: Request, session_id: str):
 
 @app.websocket("/ws/{session_id}")
 async def websocket_endpoint(websocket: WebSocket, session_id: str):
-    await websocket.accept()
     try:
+        await websocket.accept()
         while True:
             data = await websocket.receive_text()
             await websocket.send_text(f"Session {session_id} says: {data}")
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"WebSocket Error: {e}")  # Log the error
     finally:
         print("Connection closed")
