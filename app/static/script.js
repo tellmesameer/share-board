@@ -3,8 +3,11 @@ let socket;
 function connectWebSocket() {
     const sessionId = document.getElementById("sessionId").value;
     const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    const ws_route = `/ws/${sessionId}`
-    alert(`${ws_scheme}://${window.location.host}${ws_route}`)
+    const ws_route = `/ws/${sessionId}`;
+    console.log(`Connecting to WebSocket: ${ws_scheme}://${window.location.host}${ws_route}`); // Use console.log instead of alert
+    if (socket) {
+        socket.close(); // Close existing connection if any
+    }
     socket = new WebSocket(`${ws_scheme}://${window.location.host}${ws_route}`);
 
     socket.onerror = (error) => {
@@ -29,10 +32,8 @@ messageInput.addEventListener("input", () => {
     }
 });
 
+document.getElementById("sessionId").addEventListener("change", connectWebSocket);
+
 document.addEventListener("DOMContentLoaded", function () {
-    connectWebSocket(); 
-}
-);
-
-
-// document.getElementById("sessionId").addEventListener("change", connectWebSocket);
+    connectWebSocket();
+});
