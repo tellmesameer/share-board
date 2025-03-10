@@ -9,11 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
-    "http://localhost",  # Allow connections from localhost
-    "http://localhost:8000",  # Or your specific port
-    "http://127.0.0.1:8000",
-    "https://shareboard.leapcell.app",  # Correct deployed origin
-    "https://shareboard.leapcell.app/",  # Correct deployed origin
+    "*",
 ]
 
 app.add_middleware(
