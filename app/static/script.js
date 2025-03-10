@@ -4,10 +4,12 @@ function connectWebSocket() {
     const sessionId = document.getElementById("sessionId").value;
     const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
     const ws_route = `/ws/${sessionId}`
+    alert(`${ws_scheme}://${window.location.host}${ws_route}`)
     socket = new WebSocket(`${ws_scheme}://${window.location.host}${ws_route}`);
 
     socket.onerror = (error) => {
         console.error("WebSocket error:", error);
+        alert("WebSocket error:", error);
     };
 
     socket.onmessage = (event) => {
