@@ -1,22 +1,34 @@
 let socket;
 let typingTimer;
 const doneTypingInterval = 1000;  // Time in ms (1 second)
-let messageInput;  // assigned later in DOMContentLoaded
+let messageInput;  // Declare without initializing
 
-require.config({
-    paths: {
-        vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.34.0/min/vs"
-    }
-});
+function connectWebSocket() {
+    const sessionId = document.getElementById("sessionId").value;
+    const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    const ws_route = `/ws/${sessionId}`
+    socket = new WebSocket(`${ws_scheme}://${window.location.host}${ws_route}`);
 
-let monacoEditor;
+    socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        alert("WebSocket error:", error);
+    };
 
-// Initialize DOM-dependent elements and listeners after DOM load
+    socket.onmessage = (event) => {
+        messageInput.value = event.data; // Update the textarea with received data
+    };
+}
+
 document.addEventListener("DOMContentLoaded", function () {
-    messageInput = document.getElementById("messageInput");
+    messageInput = document.getElementById("editor");
 
-    connectWebSocket();
-
+    alert(messageInput.value);  // Debugging
+    
+    if (!messageInput) {
+        console.error("Error: Could not find element with id 'messageInput'. Make sure the element exists in your HTML.");
+        return;
+    }
+    
     messageInput.addEventListener("input", () => {
         clearTimeout(typingTimer);
         typingTimer = setTimeout(doneTyping, doneTypingInterval);
@@ -29,41 +41,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    require(["vs/editor/editor.main"], function () {
-        monacoEditor = monaco.editor.create(document.getElementById("editor"), {
-            value: '# Online Python Playground \n# Use the online IDE to write, edit & run your Python code \n# Create, edit & delete files online\nprint("Try programiz.pro")',
-            language: "python",
-            theme: "vs-dark",
-            automaticLayout: true,
-            fontSize: 14,
-            minimap: {
-                enabled: false,
-            },
-        });
-        window.monacoEditor = monacoEditor; // expose editor globally for run button logic
-    });
+    connectWebSocket();
 });
-
-function connectWebSocket() {
-    const sessionId = document.getElementById("sessionId").value;
-    const ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    const ws_route = `/ws/${sessionId}`;
-    socket = new WebSocket(`${ws_scheme}://${window.location.host}${ws_route}`);
-
-    socket.onerror = (error) => {
-        console.error("WebSocket error:", error);
-        alert("WebSocket error:", error);
-    };
-
-    socket.onmessage = (event) => {
-        // Use global messageInput instead of re-querying the DOM
-        messageInput.value = event.data;
-    };
-}
 
 function doneTyping() {
     const sessionId = document.getElementById("sessionId").value;
-    const message = messageInput.value;
+    const message = document.getElementById("messageInput").value;
 
     fetch(`/${sessionId}`, {  // Corrected URL
         method: 'POST',
@@ -80,11 +63,3 @@ function doneTyping() {
             console.error('Error:', error);
         });
 }
-
-fetch("/ide/python", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ code: "print('Hello from the IDE')" }),
-});
