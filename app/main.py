@@ -1,12 +1,17 @@
-from fastapi import FastAPI, Request, WebSocket, Depends, Form
+import io
+import contextlib
+import subprocess
+from pydantic import BaseModel
 from app.routes import messages
-from app.websockets import websocket_endpoint
+from fastapi import FastAPI, Request
 from app.database import init_db, get_db
-from app.crud import fetch_existing_session, save_message
-from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
+from app.websockets import websocket_endpoint
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.middleware.cors import CORSMiddleware
+from app.crud import fetch_existing_session, save_message
+from fastapi import FastAPI, Request, WebSocket, Depends, Form
 
 app = FastAPI()
 
@@ -55,3 +60,26 @@ async def save_message_endpoint(session_id: str, message: str = Form(...), db: A
     return {"status": "success", "message": "Message saved"}
 
 
+class CodeRequest(BaseModel):
+    code: str
+
+@app.post("/ide/python")
+def run_code(request: CodeRequest):
+    """
+    Executes the provided Python code using exec() and captures output.
+    WARNING: Running arbitrary code in your server environment is dangerous.
+    """
+    try:
+        stdout_buffer = io.StringIO()
+        exec_globals = {}
+        with contextlib.redirect_stdout(stdout_buffer):
+            exec(request.code, exec_globals)
+        output = stdout_buffer.getvalue()
+        print("===DEBUG OUTPUT===")
+        print(repr(output))  # This shows raw characters like \n or \r
+        return {"output": output}
+    except Exception as e:
+        return {"output": str(e)}
+    
+    
+############################################

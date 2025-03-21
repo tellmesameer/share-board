@@ -1,126 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShareBoard</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/styles.css">
-    <style>
-        body {
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        #messageInput {
-            height: 300px;
-            resize: none;
-        }
-        /* Sidebar styles */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 200px;
-            height: 100%;
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-left: 1px solid #dee2e6;
-            transition: all 0.3s ease; /* Add transition for smooth animation */
-        }
-        .sidebar.collapsed {
-            width: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        .sidebar-toggle {
-            position: absolute;
-            top: 10px;
-            left: -25px;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 5px;
-            cursor: pointer;
-        }
-        .theme-container { /* Added a container for the theme heading and dropdown */
-            position: relative;
-        }
-        .theme-dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 10px;
-            z-index: 1;
-        }
-        .theme-container:hover .theme-dropdown { /* Changed hover target to theme-container */
-            display: block;
-        }
-        .theme-dropdown button {
-            margin-bottom: 5px;
-        }
-        .dark-mode {
-            background-color: #343a40;
-            color: white;
-        }
-        .dark-mode h1, .dark-mode h5 {
-            color: white;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>My Python Playground</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/static/styles.css" />
+  <!-- Load Monaco Editor's AMD loader -->
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.34.0/min/vs/loader.js"></script>
+  <style>
+    #console {
+      white-space: pre-line;
+    }
+  </style>
 </head>
-<body class="dark-mode">
-    <div class="container">
-        <h1>ShareBoard - Scratch Pad</h1>
-        <div class="form-group" style="display: none;">
-            <label for="sessionId">Session ID:</label>
-            <input type="text" class="form-control" id="sessionId" value="{{session_id}}">
-        </div>
-        <div class="form-group">
-            <textarea class="form-control" id="messageInput" placeholder="Type your message...">{{existing_session_message}}</textarea>
-        </div>
+<body>
+  <!-- =============== TOP NAV BAR =============== -->
+  <div class="top-navbar">
+    <div class="navbar-left">
+      <div class="brand">Programiz PRO</div>
+      <div class="project-title">Untitled Project</div>
+      <!-- Example buttons (New, Open, Save, Run, etc.) -->
+      <button id="btnNew">New</button>
+      <button id="btnOpen">Open</button>
+      <button id="btnSave">Save</button>
+      <button id="btnRun" style="background-color: #007bff;">Run</button>
+    </div>
+    <div class="navbar-right">
+      <button id="btnOutput">Output</button>
+      <button id="btnHistory">History</button>
+      <button id="btnCollaborate">Collaborate</button>
+      <button id="btnChallenges">Python Challenges</button>
+    </div>
+  </div>
+
+  <!-- =============== MAIN LAYOUT =============== -->
+  <div class="ide-layout">
+    <!-- LEFT SIDEBAR (File Explorer, etc.) -->
+    <div class="left-sidebar">
+      <h5>EXPLORER</h5>
+      <ul>
+        <li>main.py</li>
+        <li>requirements.txt</li>
+        <li>Dockerfile</li>
+      </ul>
     </div>
 
-    <!-- Sidebar -->
-    <!-- <div class="sidebar">
-        <div class="sidebar-toggle">&#9776;</div>
-        <div class="theme-container">  
-            <h5>Theme</h5>
-            <div class="theme-dropdown">
-                <button class="btn btn-light theme-button" data-theme="light">Light</button>
-                <button class="btn btn-dark theme-button" data-theme="dark">Dark</button>
-            </div>
-        </div>
-    </div> -->
+    <!-- EDITOR SECTION (Monaco Editor) -->
+    <div class="editor-section">
+      <div id="editor"></div>
+    </div>
 
-    <script>
-        const themeButtons = document.querySelectorAll('.theme-button');
-        const body = document.querySelector('body');
-        const sidebar = document.querySelector('.sidebar');
-        const sidebarToggle = document.querySelector('.sidebar-toggle');
+    <!-- OUTPUT / CONSOLE SECTION -->
+    <div class="output-section">
+      <div class="output-header">Console</div>
+      <div id="console">[Program output will appear here...]</div>
+    </div>
+  </div>
 
-        themeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const theme = button.getAttribute('data-theme');
-                if (theme === 'dark') {
-                    body.classList.add('dark-mode');
-                } else {
-                    body.classList.remove('dark-mode');
-                }
-            });
+  <!-- =============== SCRIPTS =============== -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- MONACO EDITOR INITIALIZATION -->
+  <script>
+    require.config({
+      paths: {
+        vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.34.0/min/vs"
+      }
+    });
+
+    let monacoEditor;
+    require(["vs/editor/editor.main"], function () {
+      // Create the Monaco editor instance
+      monacoEditor = monaco.editor.create(document.getElementById("editor"), {
+        value: '# Type your Python code here...\nprint("Hello from Monaco!")',
+        language: "python",
+        theme: "vs-dark",
+        automaticLayout: true,
+        fontSize: 14,
+        minimap: { enabled: false },
+      });
+    });
+
+    // Run button logic: use the "/ide/python" endpoint
+    document.getElementById("btnRun").addEventListener("click", async () => {
+      if (!monacoEditor) {
+        document.getElementById("console").textContent = "Editor not loaded yet!";
+        return;
+      }
+      
+      // Get code from the editor
+      const code = monacoEditor.getValue();
+      
+      // Send code to the FastAPI endpoint "/ide/python"
+      try {
+        const response = await fetch("/ide/python", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
         });
-
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-        });
-    </script>
-
-    <script src="/static/script.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        
+        if (!response.ok) {
+          document.getElementById("console").textContent =
+            `Error ${response.status}: ${response.statusText}`;
+          return;
+        }
+        const data = await response.json();
+        // Display output in the console area
+        document.getElementById("console").textContent = data.output || "No output";
+      } catch (error) {
+        document.getElementById("console").textContent = "Error: " + error;
+      }
+    });
+  </script>
 </body>
 </html>

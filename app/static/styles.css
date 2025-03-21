@@ -1,21 +1,146 @@
-body {
-    font-family: Arial, sans-serif;
-    max-width: 600px;
-    margin: auto;
-    text-align: center;
+/* styles.css */
+
+/* Basic resets */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto", sans-serif;
 }
 
-textarea {
-    width: 100%;
-    height: 100px;
-    margin-top: 10px;
+/* Override some bootstrap or add your own specifics */
+.ide-toolbar {
+    background-color: #1b1b1b;
+    color: #ffffff;
 }
 
-button {
-    margin-top: 10px;
-    padding: 10px;
-    background: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
+/* Example run button style */
+.run-btn {
+    background-color: #28a745;
+    border-color: #28a745;
 }
+.run-btn:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* Adjust console colors, if needed */
+#console {
+    background-color: #ffffff;
+    color: #000000;
+    border-left: 1px solid #ccc;
+    padding: 1rem;
+    white-space: pre-line;  /* This preserves \n and wraps long lines */
+}
+
+/* =============== BASIC RESET & BODY =============== */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Roboto", sans-serif;
+  background-color: #1e1e1e; /* Dark background to match a typical code editor theme */
+  color: #fff;
+}
+
+/* =============== TOP NAVBAR =============== */
+.top-navbar {
+  background-color: #2b2b2b;
+  display: flex;
+  align-items: center;
+  height: 50px;
+  padding: 0 1rem;
+  justify-content: space-between;
+  border-bottom: 1px solid #444;
+}
+.top-navbar .navbar-left,
+.top-navbar .navbar-right {
+  display: flex;
+  align-items: center;
+}
+.top-navbar .navbar-left .brand {
+  font-weight: 600;
+  margin-right: 1rem;
+}
+.top-navbar .navbar-left .project-title {
+  margin-right: 2rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+.top-navbar button {
+  background: #3a3a3a;
+  border: none;
+  color: #fff;
+  padding: 5px 12px;
+  margin-right: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.top-navbar button:hover {
+  background-color: #505050;
+}
+
+/* =============== MAIN LAYOUT WRAPPER =============== */
+.ide-layout {
+  display: flex;
+  height: calc(100vh - 50px); /* fill remaining space below top navbar */
+}
+
+/* =============== LEFT SIDEBAR (Explorer, etc.) =============== */
+.left-sidebar {
+  width: 240px;
+  background-color: #2f2f2f;
+  border-right: 1px solid #444;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+}
+.left-sidebar h5 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+.left-sidebar ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+.left-sidebar li {
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+.left-sidebar li:hover {
+  text-decoration: underline;
+}
+
+/* =============== MIDDLE SECTION (Monaco Editor) =============== */
+.editor-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #444;
+}
+#editor {
+  flex: 1;
+  overflow: hidden; /* Let Monaco handle scrollbars */
+}
+
+/* =============== RIGHT SECTION (Console / Output) =============== */
+.output-section {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  background-color: #1f1f1f;
+}
+.output-header {
+  background-color: #2b2b2b;
+  padding: 0.5rem;
+  border-bottom: 1px solid #444;
+}
+#console {
+  flex: 1;
+  padding: 0.5rem;
+  overflow: auto;
+  font-family: "Courier New", Courier, monospace;
+  background-color: #fff; /* White console background */
+  color: #000;
+}
+/* ================================== */

@@ -1,6 +1,7 @@
 let socket;
 let typingTimer;
 const doneTypingInterval = 1000;  // Time in ms (1 second)
+const messageInput = document.getElementById("messageInput");
 
 function connectWebSocket() {
     const sessionId = document.getElementById("sessionId").value;
@@ -19,7 +20,6 @@ function connectWebSocket() {
     };
 }
 
-const messageInput = document.getElementById("messageInput");
 
 messageInput.addEventListener("input", () => {
     clearTimeout(typingTimer);
@@ -34,7 +34,7 @@ messageInput.addEventListener("input", () => {
 });
 
 //user is "finished typing," do something
-function doneTyping () {
+function doneTyping() {
     const sessionId = document.getElementById("sessionId").value;
     const message = document.getElementById("messageInput").value;
 
@@ -45,19 +45,52 @@ function doneTyping () {
         },
         body: `message=${message}`
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    connectWebSocket(); 
+    connectWebSocket();
 }
 );
 
-
 // document.getElementById("sessionId").addEventListener("change", connectWebSocket);
+
+fetch("/ide/python", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ code: "print('Hello from the IDE')" }),
+});
+
+
+
+require.config({
+    paths: {
+        vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.34.0/min/vs"
+    }
+});
+
+let monacoEditor;
+
+require(["vs/editor/editor.main"], function () {
+    // Create the editor
+    monacoEditor = monaco.editor.create(document.getElementById("editor"), {
+        value: '# Type your Python code here...\nprint("Hello from Monaco!")',
+        language: "python",
+        theme: "vs-dark", // "vs" for light theme
+        automaticLayout: true,
+        fontSize: 14,
+        minimap: {
+            enabled: false,
+        },
+    });
+}); 
+
+//   ####################################
