@@ -52,7 +52,7 @@
 
     <!-- OUTPUT / CONSOLE SECTION -->
     <div class="output-section">
-      <div class="output-header">Console</div>
+      <div class="output-header">Output</div>
       <div id="console">[Program output will appear here...]</div>
     </div>
   </div>
@@ -61,57 +61,33 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-  <!-- MONACO EDITOR INITIALIZATION -->
+  <!-- MONACO EDITOR RUN BUTTON LOGIC -->
   <script>
-    require.config({
-      paths: {
-        vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.34.0/min/vs"
-      }
-    });
-
-    let monacoEditor;
-    require(["vs/editor/editor.main"], function () {
-      // Create the Monaco editor instance
-      monacoEditor = monaco.editor.create(document.getElementById("editor"), {
-        value: '# Type your Python code here...\nprint("Hello from Monaco!")',
-        language: "python",
-        theme: "vs-dark",
-        automaticLayout: true,
-        fontSize: 14,
-        minimap: { enabled: false },
-      });
-    });
-
-    // Run button logic: use the "/ide/python" endpoint
+  document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("btnRun").addEventListener("click", async () => {
-      if (!monacoEditor) {
+      if (!window.monacoEditor) {
         document.getElementById("console").textContent = "Editor not loaded yet!";
         return;
       }
-      
-      // Get code from the editor
-      const code = monacoEditor.getValue();
-      
-      // Send code to the FastAPI endpoint "/ide/python"
+      const code = window.monacoEditor.getValue();
       try {
         const response = await fetch("/ide/python", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code }),
         });
-        
         if (!response.ok) {
           document.getElementById("console").textContent =
             `Error ${response.status}: ${response.statusText}`;
           return;
         }
         const data = await response.json();
-        // Display output in the console area
         document.getElementById("console").textContent = data.output || "No output";
       } catch (error) {
         document.getElementById("console").textContent = "Error: " + error;
       }
     });
+  });
   </script>
 </body>
 </html>
